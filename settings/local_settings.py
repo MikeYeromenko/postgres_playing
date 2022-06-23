@@ -1,7 +1,6 @@
-postgresql = {
-    "pguser": "postgres",
-    "pgpasswd": "postgres",
-    "pghost": "0.0.0.0",
-    "pgport": 5432,
-    "pgdb": "alpha",
-}
+POSTGRES_USER = "postgres"
+POSTGRES_PASSWORD = "postgres"
+POSTGRES_HOST = "0.0.0.0"
+POSTGRES_PORT = 5432
+DB_NAME = "alpha"
+ECHO_DB_QUERIES = False

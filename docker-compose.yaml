@@ -1,0 +1,29 @@
+version: "3.7"
+
+volumes:
+  db-data:
+    driver: local
+  pgadmin-data:
+    driver: local
+
+services:
+  db:
+    image: postgres:10.14
+    restart: unless-stopped
+    container_name: dbs
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "0.0.0.0:5432:5432"
+  dgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    container_name: pgadmins
+    volumes:
+      - pgadmin-data:/var/list/pgadmin
+    env_file:
+      - .env
+    ports:
+      - "0.0.0.0:8080:80"

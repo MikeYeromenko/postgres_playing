@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, text, ForeignKey, VARCHAR, SMALLINT
+from sqlalchemy import Column, text, ForeignKey, VARCHAR, SMALLINT, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -46,10 +46,36 @@ class Meters(Base, UUIDMixin, CreatedAtMixin):
 
     meter_type = relationship("MeterTypes", back_populates="meters")
     panel = relationship("Panels", back_populates="meters")
-    device_meters = relationship("DeviceMeters", back_populates="meter")
 
     def __repr__(self):
         return (
             f"{self.__class__.__name__}(panel_id={self.panel_id}, meter_type_id={self.meter_type_id}, "
             f"meter_id={self.meter_id})"
+        )
+
+
+class Devices(Base, UUIDMixin, CreatedUpdatedMixin):
+    name = Column(VARCHAR(length=128), nullable=False, unique=True, index=True)
+    color = Column(VARCHAR(length=30), nullable=False)
+    icon = Column(VARCHAR(length=128), nullable=False)
+
+    device_meters = relationship("DeviceMeters", back_populates="device")
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(name='{self.name}', color='{self.color}', icon='{self.icon}')"
+
+
+class DeviceMeters(Base, UUIDMixin, CreatedAtMixin):
+    __table_args__ = (UniqueConstraint("meter_id", "channel"),)
+
+    device_id = Column(UUID(as_uuid=True), ForeignKey("devices.id", ondelete="CASCADE"), nullable=False)
+    meter_id = Column(UUID(as_uuid=True), ForeignKey("meters.id", ondelete="CASCADE"), nullable=False)
+    channel = Column(SMALLINT, nullable=False)
+
+    device = relationship("Devices", back_populates="device_meters")
+    meter = relationship("Meters", back_populates="device_meters")
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}(device_id={self.device_id}, meter_id={self.meter_id}, channel={self.channel})"
         )

@@ -1,49 +1,10 @@
 from datetime import datetime as dt
 
 import pandas
-from fastapi import File, UploadFile
-from fastapi.responses import HTMLResponse
 from sqlalchemy import text
 
 from api.base import app
 from bases import get_session_factory
-
-
-@app.get("/")
-async def root():
-    content = """
-    <body>
-    <form action="/files/" enctype="multipart/form-data" method="post">
-    <input name="files" type="file" multiple>
-    <input type="submit">
-    </form>
-    <form action="/uploadfiles/" enctype="multipart/form-data" method="post">
-    <input name="files" type="file" multiple>
-    <input type="submit">
-    </form>
-    </body>
-        """
-    return HTMLResponse(content=content)
-
-
-@app.get("/items/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id}
-
-
-@app.get("/files/{file_path:path}")
-async def read_file(file_path: str):
-    return {"file_path": file_path}
-
-
-@app.post("/files/")
-async def create_file(file: bytes = File()):
-    return {"file_size": len(file)}
-
-
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
-    return {"filename": file.filename}
 
 
 @app.get("/dashboard/")
